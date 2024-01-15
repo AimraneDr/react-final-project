@@ -1,30 +1,45 @@
-// reducers/students.js
-import { trainers } from "../../data/data"; 
+import {
+  FETCH_TRAINERS_SUCCESS,
+  ADD_TRAINER_SUCCESS,
+  UPDATE_TRAINER_SUCCESS,
+  DELETE_TRAINER_SUCCESS,
+} from '../actions/trainer.actions';
+
 const initialState = {
-    trainers: [...trainers],
-  };
-  
-  const trainersReducer = (state = initialState, action) => {
-    switch (action.type) {
-      case 'ADD_TRAINER':
-        return {
-          ...state,
-          trainers: [...state.trainers, action.payload],
-        };
-      case 'UPDATE_TRAINER':
-        return {
-          ...state,
-          trainers: state.trainers.map(s => s.id === action.payload.id ? action.payload : s),
-        };
-      case 'DELETE_TRAINER' : 
-        return {
-          ...state,
-          trainers : state.trainers.filter(s => s !== action.payload)
-        };
-      default:
-        return state;
-    }
-  };
-  
-  export default trainersReducer;
-  
+  trainers: [],
+};
+
+const trainerReducer = (state = initialState, action) => {
+  switch (action.type) {
+    case FETCH_TRAINERS_SUCCESS:
+      return {
+        ...state,
+        trainers: action.payload,
+      };
+
+    case ADD_TRAINER_SUCCESS:
+      return {
+        ...state,
+        trainers: [...state.trainers, action.payload],
+      };
+
+    case UPDATE_TRAINER_SUCCESS:
+      return {
+        ...state,
+        trainers: state.trainers.map((trainer) =>
+          trainer.id === action.payload.id ? action.payload : trainer
+        ),
+      };
+
+    case DELETE_TRAINER_SUCCESS:
+      return {
+        ...state,
+        trainers: state.trainers.filter((trainer) => trainer.id !== action.payload),
+      };
+
+    default:
+      return state;
+  }
+};
+
+export default trainerReducer;

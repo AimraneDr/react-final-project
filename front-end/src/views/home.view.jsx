@@ -6,7 +6,12 @@ export default function Home(){
             <h1>Home</h1>
             
             <BranchesList/>
+
+            <div>
+
+            </div>
             
         </div>
     )
 }
+

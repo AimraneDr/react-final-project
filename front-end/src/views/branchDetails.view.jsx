@@ -1,21 +1,40 @@
 import { useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import GroupsList from "../components/groupsList.component";
+import { useEffect } from "react";
+import { getBranches } from "../redux/actions/branch.actions";
 
 
 // localhost/branches/branchname/details
 export default function BranchDetails(){
     const {name} = useParams();
-    const branches = useSelector(state => state.branches.branches)
+    const dispatch = useDispatch();
+    const branches = useSelector((state) => state.branches.branches);
+    const branch = branches.find((b) => b.name === name.replace(/-/g, " "));
 
-    const branch = branches.find(b => b.name == name.replace(/-/g, ' '))
+    useEffect(() => {
+        dispatch(getBranches())
+    }, [dispatch])
 
+    if(!branch){
+        return (
+            <div className=" w-full flex flex-col items-stretch gap-8">
+                <div className="h-[500px] bg-teal-50 flex justify-center items-center">
+                    <h1 className="text-6xl font-bold text-teal-800
+                                border-t-4 border-b-4 border-teal-800
+                                py-3">
+                        The Branch you specified does not exist.
+                    </h1>
+                </div>
+            </div>
+        )
+    }    
     return(
         <div className=" w-full flex flex-col items-stretch gap-8">
             <div className="h-[500px] bg-teal-50 flex justify-center items-center">
                 {/* add background image */}
 
-                <h1 className="text-6xl font-bold text-teal-800
+                <h1 className="text-6xl font-bold text-teal-800 text-center
                             border-t-4 border-b-4 border-teal-800
                             py-3">
                     {branch.name.toUpperCase()}

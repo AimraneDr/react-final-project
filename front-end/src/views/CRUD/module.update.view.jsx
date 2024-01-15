@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react"
-import { useDispatch, useSelector } from "react-redux"
-import { addModule, getModules } from "../../redux/actions/module.actions"
+import { useState } from "react"
+import { useParams } from "react-router-dom"
+import { updateModule } from "../../redux/actions/module.actions"
+import { useSelector } from "react-redux"
 
 
 // module = {
@@ -10,30 +11,24 @@ import { addModule, getModules } from "../../redux/actions/module.actions"
 //     totalHours : 40,
 //     nature : 'local', // local || regeaux
 // },
-export default function ModuleAdd(){
+export default function ModuleUpdate(){
+    const {id} = useParams()
 
-    const [moduleName, setModuleName] = useState('')
-    const [moduleDescription, setModuleDescription] = useState('')
-    const [moduleTotalHours, setModuleTotalHours] = useState(0)
-    const [moduleNature, setModuleNature] = useState('')
+    //fetch current Module from database
+    const module = useSelector(state => state.modules.find(m => m.id === id))
 
-    const dispatch = useDispatch()
-    const modules = useSelector(state => state.modules.modules)
+    const [moduleName, setModuleName] = useState(module.name)
+    const [moduleDescription, setModuleDescription] = useState(module.description)
+    const [moduleTotalHours, setModuleTotalHours] = useState(module.totalHours)
+    const [moduleNature, setModuleNature] = useState(module.nature)
 
-    useEffect(()=>{
-        dispatch(getModules())
-    }, [dispatch])
 
-    const newID = () => {
-        let id = 0
-        modules.map(m => {Number(m.id) > id ? id = Number(m.id) : id = id})
-        return id + 1;
-    }
-
-    const tryAddNewModule = (e) => {
-        dispatch(addModule(
+    const tryUpdateModule = (e) => {
+        e.preventDefault()
+        const dispatcher = useDispatch()
+        dispatcher(updateModule(
+            module.id,
             {
-                id : newID(),
                 name : moduleName,
                 description : moduleDescription,
                 totalHours : moduleTotalHours,
@@ -41,12 +36,15 @@ export default function ModuleAdd(){
             }
         ))
 
-        alert('Module Added')
+        alert('Module Updated')
+
+        document.location.reload()
     }
     
     return(
         <div className="w-full h-full flex flex-col justify-center items-center p-12">
-            <form className="bg-slate-100 shadow-2xl rounded-xl p-5 min-w-[50%]
+            <form action=""
+                className="bg-slate-100 shadow-2xl rounded-xl p-5 min-w-[50%]
                             flex gap-4 flex-col">
                 <h1 className="text-2xl text-teal-700 font-bold mb-5">Create New Module</h1>
                 <div className="flex flex-col gap-2 px-6">
@@ -55,31 +53,35 @@ export default function ModuleAdd(){
                         className="text-xl text-teal-700">
                         Name
                     </label>
-                    <input type="text" id="name"
+                    <input type="text" name="name" id="name"
                             className="mb-2 p-4 py-2 rounded-xl text-lg outline-teal-700"
-                            onChange={(e) => setModuleName(e.target.value)}/>
+                            onChange={(e) => setModuleName(e.target.value)}
+                            value={module.name}/>
                     <label htmlFor="description"
                         className="text-xl text-teal-700">
                         Description
                     </label>
-                    <textarea id="description"
+                    <textarea name="description" id="description"
                             className="mb-2 p-4 py-2 rounded-xl text-lg outline-teal-700" 
-                            onChange={(e) => setModuleDescription(e.target.value)}/>
+                            onChange={(e) => setModuleDescription(e.target.value)}
+                            value={module.description}/>
 
                     <label htmlFor="totalHours"
                         className="text-xl text-teal-700">
                         Total Hours
                     </label>
-                    <input type="number" id="totalHours" min={0} max={150}
+                    <input type="number" name="totalHours" id="totalHours" min={0} max={150}
                             className="mb-2 p-4 py-2 rounded-xl text-lg outline-teal-700" 
-                            onChange={(e) => setModuleTotalHours(e.target.value)}/>
+                            onChange={(e) => setModuleTotalHours(e.target.value)}
+                            value={module.totalHours}/>
                     <label htmlFor="nature"
                         className="text-xl text-teal-700">
                         Nature
                     </label>
-                    <select id="nature"
+                    <select name="nature" id="nature"
                             className="mb-2 p-4 py-2 rounded-xl text-lg outline-teal-700" 
-                            onChange={(e) => setModuleNature(e.target.value)}>
+                            onChange={(e) => setModuleNature(e.target.value)}
+                            value={module.nature}>
                         <option value="local">Local</option>
                         <option value="regeaux">Regeaux</option>
                     </select>
@@ -94,7 +96,7 @@ export default function ModuleAdd(){
                                 className="p-4 py-2 border-2 border-teal-500 rounded-lg
                                         text-lg text-teal-700 hover:bg-teal-500 hover:text-slate-100 font-bold
                                         transition-all ease-in-out duration-200"
-                                onClick={tryAddNewModule}/>
+                                onClick={tryUpdateModule}/>
                     </div>
                 
             </form>

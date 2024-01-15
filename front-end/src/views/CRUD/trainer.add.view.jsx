@@ -1,4 +1,6 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import { addTrainer, getTrainers } from "../../redux/actions/trainer.actions"
 
 
 // trainer = {
@@ -19,9 +21,35 @@ export default function TrainerAdd(){
     const [TrainerGender, setTrainerGender] = useState('')
     const [TrainerTitle, setTrainerTitle] = useState('')
 
+    const dispatch = useDispatch()
+    const trainers = useSelector(state => state.trainers.trainers)
+
+    useEffect(() => {
+        dispatch(getTrainers())
+    }, [dispatch])
+
+
+    const newID = () => {
+        let id = 0;
+        trainers.map(t => {if(Number(t.id) > id) id = Number(t.id)})
+        return id + 1;
+    }
 
     const tryAddNewTrainer = (e) => {
-        
+        e.preventDefault()
+
+        dispatch(addTrainer(
+            {
+                id: newID(), 
+                firstname: TrainerFirstName, 
+                lastname: TrainerLastName, 
+                birthdate: TrainerBirthDate,
+                gender: TrainerGender, 
+                title: TrainerTitle
+            }
+        ))
+        debugger;
+        alert('Trainer Added')
     }
     
     return(
@@ -29,7 +57,7 @@ export default function TrainerAdd(){
             <form action=""
                 className="bg-slate-100 shadow-2xl rounded-xl p-5 min-w-[50%]
                             flex gap-4 flex-col">
-                <h1 className="text-2xl text-teal-700 font-bold mb-5">Create New Branch</h1>
+                <h1 className="text-2xl text-teal-700 font-bold mb-5">Create New Trainer (formateur)</h1>
                 <div className="flex flex-col gap-2 px-6">
 
                     <label htmlFor="firstname"
@@ -68,7 +96,7 @@ export default function TrainerAdd(){
                         <div className="flex flex-row gap-2 jsutify-center items-center">
                             <input type="radio" name="gender" id="male"
                                     className="mb-2 p-4 py-2 rounded-xl text-lg outline-none"
-                                    onChange={(e) => setTrainerGender(e.target.value)}/>
+                                    onChange={(e) => setTrainerGender(e.target.value === true ? 'male' : 'female')} />
                             <label htmlFor="male"
                                 className="text-xl text-teal-700">
                                 Male
@@ -77,7 +105,7 @@ export default function TrainerAdd(){
                         <div className="flex flex-row gap-2 jsutify-center items-center">
                             <input type="radio" name="gender" id="female"
                                     className="mb-2 p-4 py-2 text-lg outline-none"
-                                    onChange={(e) => setTrainerGender(e.target.value)}/>
+                                    onChange={(e) => setTrainerGender(e.target.value === true ? 'female' : 'male')}/>
                             <label htmlFor="female"
                                 className="text-xl text-teal-700">
                                 Female

@@ -22,6 +22,11 @@ import GroupAdd from './views/CRUD/group.add.view'
 import ModuleAdd from './views/CRUD/module.add.view'
 import TraineeAdd from './views/CRUD/trainee.add.view'
 import TrainerAdd from './views/CRUD/trainer.add.view'
+import BranchUpdate from './views/CRUD/branch.update.view'
+import GroupUpdate from './views/CRUD/group.update.view'
+import TraineeUpdate from './views/CRUD/trainee.update.view'
+import TrainerUpdate from './views/CRUD/trainer.update.view'
+import ModuleUpdate from './views/CRUD/module.update.view'
 
 function App() {
   const [user, setUser] = useState({name : 'aimrane'})
@@ -44,31 +49,31 @@ function App() {
                 {/* branches */}
                 <Route path='/branches/details/:name/' element={<BranchDetails />} />
                 <Route path='/branches/add/' element={<BranchAdd />} />
-                <Route path='/branches/update/:id/' element={<></>} />
+                <Route path='/branches/update/:id/' element={<BranchUpdate/>} />
                 <Route path='/branches/delete/:id/' element={<></>} />
                 
                 {/* groups */}
                 <Route path='/groups/details/:name/' element={<GroupDetails />} />
                 <Route path='/groups/add/' element={<GroupAdd />} />
-                <Route path='/groups/update/:id/' element={<GroupDetails />} />
+                <Route path='/groups/update/:id/' element={<GroupUpdate />} />
                 <Route path='/groups/delete/:id/' element={<GroupDetails />} />
                 
                 {/* trainees */}
                 <Route path='/trainees/details/:id/' element={<TraineeDetails />} />
                 <Route path='/trainees/add/' element={<TraineeAdd />} />
-                <Route path='/trainees/update/:id/' element={<TraineeDetails />} />
+                <Route path='/trainees/update/:id/' element={<TraineeUpdate />} />
                 <Route path='/trainees/delete/:id/' element={<TraineeDetails />} />
                 
                 {/* trainers */}
                 <Route path='/trainers/details/:id/' element={<TrainerDetails />} />
                 <Route path='/trainers/add/' element={<TrainerAdd />} />
-                <Route path='/trainers/update/:id/' element={<TrainerDetails />} />
+                <Route path='/trainers/update/:id/' element={<TrainerUpdate />} />
                 <Route path='/trainers/selete/:id/' element={<TrainerDetails />} />
                 
                 {/* modules */}
                 <Route path='/modules/details/:id/' element={<ModuleDetails />} />
                 <Route path='/modules/add/' element={<ModuleAdd />} />
-                <Route path='/modules/update/:id/' element={<ModuleDetails />} />
+                <Route path='/modules/update/:id/' element={<ModuleUpdate />} />
                 <Route path='/modules/delete/:id/' element={<ModuleDetails />} />
           
               </Routes>

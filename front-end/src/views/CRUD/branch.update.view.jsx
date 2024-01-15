@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { addBranch, getBranches } from "../../redux/actions/branch.actions"
-import SearchSelect from "../../components/searchSelect.component"
-import { getModules } from "../../redux/actions/module.actions"
-
+import { useParams } from "react-router-dom"
+import { updateBranch } from "../../redux/actions/branch.actions"
 
 // branch = {
 //     id : 0,
@@ -12,41 +10,37 @@ import { getModules } from "../../redux/actions/module.actions"
 //     numGroups : 1,
 //     modules : ['M201','M202','M203'],
 // },
-export default function BranchAdd(){
-    const dispatcher = useDispatch()
+export default function BranchUpdate(){
+    const {id} = useParams()
+
+    //fetch the branch from the database
+    const branch = useSelector(state => state.branches.find(branch => branch.id === id))
     
-    useEffect(() => {
-        dispatcher(getBranches())
-        dispatcher(getModules())
-    }, [])
-    
-    const branches = useSelector(state => state.branches.branches)
-    const modules = useSelector(state => state.modules.modules)
 
-    const newID = () => {
-        let id = 0
-        branches.map(b => {if(Number(b.id) > id) id = Number(b.id)})
-        return id + 1
-    } 
-
-    const [branchNmae, setBranchName] = useState('')
-    const [branchDescription, setBranchDescription] = useState('')
-    const [branchModules, setBranchModules] = useState([])
+    const [branchNmae, setBranchName] = useState(branch.name)
+    const [branchDescription, setBranchDescription] = useState(branch.description)
+    const [branchGroups, setBranchGroups] = useState(useSelector(state => state.groups.filter(g => g.branchID === branch.id)).map(g => g.id))
+    const [branchModules, setBranchModules] = useState(branch.modules)
 
 
-    const tryAddNewBranch = (e) => {
-        e.preventDefault()
-        dispatcher(addBranch(
-            {
-                id : newID(),
-                name : branchNmae,
-                description : branchDescription,
-                numGroups : 0,
-                modules : branchModules.map(m => Number(m))
-            }
-        ))
+    const tryUpdateBranch = (e) => {
+        const dispatcher = useDispatch()
+        dispatcher(
+            branch.id,
+            updateBranch({
+                id : branch.id, 
+                name : branchNmae, 
+                description : branchDescription, 
+                numGroups : branchGroups.length, 
+                modules : branchModules
+            })
+        )
 
-        alert('Branch Added')
+        //push notification
+        alert('Branch Updated')
+
+        //rerender the component
+        window.location.reload()
     }
     
     return(
@@ -63,21 +57,25 @@ export default function BranchAdd(){
                     </label>
                     <input type="text" name="name" id="name"
                             className="mb-2 p-4 py-2 rounded-xl text-lg outline-teal-700"
-                            onChange={(e) => setBranchName(e.target.value)}/>
+                            onChange={(e) => setBranchName(e.target.value)}
+                            value={branch.name}/>
                     <label htmlFor="description"
                         className="text-xl text-teal-700">
                         Description
                     </label>
                     <textarea name="description" id="description"
-                            className="mb-2 p-4 py-2 rounded-xl text-lg outline-teal-700" onChange={(e) => setBranchDescription(e.target.value)}/>
-
+                            className="mb-2 p-4 py-2 rounded-xl text-lg outline-teal-700" onChange={(e) => setBranchDescription(e.target.value)}
+                            value={branch.description}/>
+                    <label htmlFor="groups"
+                        className="text-xl text-teal-700">
+                        Groups
+                    </label>
+                    {/* MultiSelection box */}
                     <label htmlFor="modules"
                         className="text-xl text-teal-700">
                         Modules
                     </label>
                     {/* MultiSelection box */}
-                    <SearchSelect options={modules.map(m => {return {val : m.id, label: m.name}})} multiple name='groups' id='groups'
-                                state={{val: branchModules, set: setBranchModules}}/>
                 </div>
 
                 <div className="flex flex-row justify-between">
@@ -89,7 +87,7 @@ export default function BranchAdd(){
                                 className="p-4 py-2 border-2 border-teal-500 rounded-lg
                                         text-lg text-teal-700 hover:bg-teal-500 hover:text-slate-100 font-bold
                                         transition-all ease-in-out duration-200"
-                                onClick={(e) => tryAddNewBranch(e)}/>
+                                onClick={tryUpdateBranch}/>
                     </div>
                 
             </form>

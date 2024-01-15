@@ -1,8 +1,14 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import BranchCard from "./branchCard.component";
+import { useEffect } from "react";
+import { getBranches } from "../redux/actions/branch.actions";
 
 
 export default function BranchesList(){
+    const dispatch = useDispatch()
+    useEffect(() => {
+        dispatch(getBranches())
+    }, [])
     const branches = useSelector(state => state.branches.branches)
     return (
         <div className="">
